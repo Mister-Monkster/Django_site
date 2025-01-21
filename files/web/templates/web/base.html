@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+
+    <link rel="stylesheet" href="{% static 'web/css/style.css'%}">
+    <link rel="stylesheet" href="./static/web/css/style.css" type="text/css" media="all" />
+    <link rel="shortcut icon" href="{% static 'web/image/logo.png' %}" type="icon/png" />
+</head>
+<body>
+    <header>
+        <div class='menu'>
+            <div class="logo">
+                <img src="/static/web/image/logo.png" height="50", width="50">
+            </div>
+                {% block menu %}
+                <div class="menu_points">
+                    <ul>
+                        {% for m in menu %}
+                            <li><a href={{m.urlname}}><button class="button">{{m.title}}</button></a></li>
+                        {% endfor %}
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                            <li><a href='{% url "add_post" %}'><button class="button">Добавить пост</button></a></li>
+                            <li><a href='{% url "moderation" %}'><button class="button">Модерация</button></a></li>
+                        {% endif %}
+                        {% if request.user.is_superuser %}
+                            <li><a href='/admin/'><button class="button">Админ панель</button></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            <div class="reg_and_log">
+                    {% if request.user.is_authenticated and request.user.is_verificated %}
+                        <p><a href="/main/user/{{ request.user.pk }}">{{request.user.username}}</a> | <a href="{% url 'logout' %}"> Выйти</a></p>
+                    {% elif request.user.is_authenticated and not request.user.is_verificated %}
+                        <p >{{request.user.username}} | <a href="{% url 'logout' %}"> Выйти</a></p>
+                    {% else %}
+                        <p><a href="{% url 'registration'%}">Регистрация</a> | <a href="{% url 'login' %}"> Вход</a></p>
+                    {% endif %}
+            </div>
+        </div>
+        {% endblock %}
+    </header>
+
+
+
+<div class="scroll">
+    {% block cats %}
+
+    {% endblock %}
+    {% block title %}
+    {%  endblock %}
+    <div class ='content'>
+{% block content %}
+
+{% endblock %}
+{% if page_obj.has_other_pages %}
+<nav class="list-pages">
+    <ul>
+        {% if page_obj.has_previous %}
+        <li class="page-num">
+            <a href="?page=1"><button class="button">&lt&lt</button></a>
+        </li>
+        {% endif %}
+        {% for p in paginator.page_range %}
+        {% if page_obj.number == p %}
+        <li class="selected_page">{{ p }}</li>
+        {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            <li class="page-num">
+                <a href="?page={{ p }}"><button class="button">{{p}}</button></a>
+            </li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li class="page-num">
+            <a href="?page={{ paginator.num_pages }}"><button class="button">&gt&gt</button></a>
+        </li>
+        {% endif %}
+    </ul>
+
+</nav>
+{% endif %}
+</div>
+<div class="footer">
+    <div class="about">
+    <a href="{% url 'feedback' %}">Обратная связь</a>
+    <p>Copyright &copy;  2024<br>Все права защищены</p>
+    </div>
+</div>
+</body>
+</html>

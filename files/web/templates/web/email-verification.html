@@ -1,0 +1,21 @@
+{% extends 'web/base_form.html' %}
+
+{% block content %}
+{% if not request.user.is_verificated %}
+ <p class="form_title">Подтверждение</p>
+    {% csrf_token %}
+    {% for f in form %}
+        <div class="form_group">
+            {{ f }}
+            <label class="form_label" for="{{ f.id_for_label }}">{{f.label}}</label>
+            {% for e in f.errors %}
+                <div class="form_error">{{e}}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <div class ='button-pad'><button type="submit" class="form_button">Подтвердить</button></div>
+     <div class ='button-pad'><a href="{% url 'send_message' %}" class="help_button"><button class="form_button" type="button">Отправить код повторно</button></a></div>
+{% else %}
+<p class="auth_error"> Ошибка. Вы верифицированы.</p>
+{% endif %}
+{% endblock %}

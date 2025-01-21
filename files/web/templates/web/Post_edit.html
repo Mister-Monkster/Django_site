@@ -1,0 +1,49 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+
+        {% if request.user.is_staff or request.user.is_superuser %}
+        <h1 class="maintitle_edit">{{ title }}</h1>
+        <form  method='post' enctype="multipart/form-data" class="form_for_post">
+              {% csrf_token %}
+            {% for f in form %}
+            {% if f.label != "Изображение" and f.label != "Изображение 2" and f.label != "Изображение 3" and f.label != "Опубликовано" %}
+                <div class="form_group_post">
+                {% if f.label == "Category" %}
+                    <label class="label-post">Категория</label>
+                    {{ f }}
+                {% else %}
+                    {{ f }}
+                {% endif %}
+                <div class="form_error">{{f.errors}}</div>
+                </div>
+            {% else %}
+            {% if f.label != "Опубликовано" %}
+            <label class="label-post-image" for="{{ f.id_for_label }}">{{f.label}}</label>
+                    <div class="form_group_post_image">
+                        {{ f }}
+                        <div class="form_error">{{f.errors}}</div>
+                    </div>
+            {% endif %}
+            {% endif %}
+            {% if request.user.is_superuser and f.label == "Опубликовано"%}
+                        <div class="form_group_post">
+                     <label class="label-post" for="{{ f.id_for_label }}">{{f.label}}</label>
+                        {{ f }}
+                        <div class="form_error">{{f.errors}}</div>
+                    </div>
+            {% endif %}
+            {% endfor %}
+    <script>
+      const textarea = document.querySelector("textarea");
+      textarea.addEventListener("keydown", e =>{
+        textarea.style.height = "350px";
+        let scHeight = e.target.scrollHeight - 35;
+        textarea.style.height = `${scHeight}px`;
+      });
+    </script>
+            <button class="button" type='submit'>Сохранить</button>
+        </form>
+            <a href='{{ request.META.HTTP_REFERER }}'> <button class="button">Назад</button></a>
+{% endif %}
+{% endblock %}

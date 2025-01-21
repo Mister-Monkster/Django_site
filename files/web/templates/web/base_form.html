@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+     <link rel="stylesheet" href="{% static 'web/css/style_new.css'%}">
+    <link rel="stylesheet" href="./static/web/css/style_new.css" type="text/css" media="all" />
+    <link rel="shortcut icon" href="{% static 'web/image/logo.png' %}" type="icon/png" />
+</head>
+<body>
+
+     <form method="post" class="form">
+         {% block content %}
+         {% endblock %}
+         <div class ='button-pad'><a  href="{% url 'main' %}" class="help_button"><button class="form_button", type="button">На главную</button></a></div>
+     </form>
+
+
+
+
+</body>
+</html>

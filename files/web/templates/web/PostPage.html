@@ -1,0 +1,88 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+    {% if request.user.is_authenticated %}
+    {% if request.user.is_superuser or request.user.is_staff %}
+        <div class="backbutton">
+        <a href='{{ request.path }}/edit' ><img src="https://cdn.icon-icons.com/icons2/931/PNG/512/edit_modify_icon-icons.com_72390.png" height="50px" width="50px" class="button_edit"></a>
+        </div>
+    {% endif %}
+    <h1 class="title">{{ post.title }}</h1>
+    <div class="text">
+    <p >{{ post.text|linebreaks}}</p>
+    </div>
+    <div class="image">
+    <img src="{{ post.image.url }}" ></div>
+    {% if post.image2 %}
+        <div class="image">
+    <img src="{{ post.image2.url }}" ></div>
+    {%endif%}
+    {% if post.image3 %}
+    <div class="image">
+    <img src="{{ post.image3.url }}" ></div>
+    {%endif%}
+    <p class="info" ><img class="author-img" src="https://api.icons8.com/download/54ca22984aa83d79b5b77b8b117591e3c9bd96ba/iOS7/PNG/512/Very_Basic/contacts_filled-512.png"><b>Автор: {{ post.author }}</b><br>Дата публикации: {{ post.date }}</p>
+    {% if request.user.is_superuser and  not post.is_published %}
+            <div class="publish_button">
+        <a href="{% url 'publish_post' pk=post.pk%}"><button class="button">Опубликовать</button></a>
+    </div>
+    {% endif %}
+    <div class="backbutton">
+        <a href=/main><button class="button">На главную</button></a>
+    </div>
+<div class="comments">
+        {% if request.user.is_verificated %}
+        <h2>Комментарии</h2>
+        <form action="{% url 'post_page' post.slug %}" method='post' name='ComForm' class="input">
+              {% csrf_token %}
+            {% for f in form %}
+                        <div class="text-comment"><b>{{f}} </b></div>
+                        <div class="form_error">{{ f.errors }}</div>
+            {% endfor %}
+
+                    <script>
+                        document.getElementById('id_text')
+                            .addEventListener('keyup', function(event) {
+                            if (event.code === 'Enter')
+                            {
+                                event.preventDefault();
+                                document.querySelector('form').submit();
+                            }
+                                });
+                    </script>
+            <button class="button" type='submit'>Отправить</button>
+
+        </form>
+
+        <div class="com_list">
+            {% for c in comments %}
+            {% if c.is_published == True %}
+            {% if '👑' in c.author %}
+                <div class="com">
+                        <div class="author_admin"><p>{{c.author}}</p></div>
+                        <div class="com_text"><p>{{c.text}}</p></div>
+                        <div class="date"><p>{{c.date}}</p></div>
+                </div>
+            {% else %}
+            <div class="com">
+                         <div class="author"><p>{{c.author}}</p></div>
+                        <div class="com_text"><p>{{c.text}}</p></div>
+                        <div class="date"><p>{{c.date}}</p></div>
+                </div>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="comment-error">
+        <p class="auth_error">Комментарии доступны только Верефицированным и активным пользователям. Вы можете пройти <a href = "{% url 'send_message' %}" >Верификацию</a> </p>
+        </div>
+        {% endif %}
+    </div>
+{% else %}
+<p class="auth_error">Просмотри постов доступен только авторизованным пользователям. Вы можете <a href = "{% url 'login' %}">Войти</a> или <a href = "{% url 'login' %}">Зарегестрироваться</a></p>
+    <div class="backbutton">
+        <a href=/main><button class="button">На главную</button></a>
+    </div>
+{% endif %}
+{% endblock %}

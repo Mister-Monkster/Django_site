@@ -1,0 +1,28 @@
+{% extends 'web/base.html' %}
+
+{% block content %}
+    {% if request.user.is_superuser or request.user.is_staff %}
+        {% if comments %}
+           {% for c in comments %}
+                {% if c.is_published == False %}
+                    <div class="com_mod">
+                        <div class="div_com_mod">
+                         <p class="com_author_mod">{{ c.author }}:</p>
+                        <p class="com_text_mod">{{ c.text }}</p>
+                        </div>
+                        <p class="com_date_mod">{{c.date}}</p>
+                        <div class="mod_but">
+                            <a href="{% url 'del_com' pk=c.pk %}"><button class="mod_button">Удалить</button></a>
+
+                            <a href="{% url 'con-allowed' pk=c.pk %}"><button class="mod_button">Опубликовать</button></a>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="auth_error">Ошибка доступа.</p>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <h1 class="title">Нет комментариев для модерации.</h1>
+        {%endif%}
+    {% endif %}
+{% endblock %}

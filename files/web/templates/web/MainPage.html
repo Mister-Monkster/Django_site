@@ -1,0 +1,94 @@
+{% extends 'web/base.html' %}
+
+{% block cats %}
+
+<div class="categories">
+    <h1 class="cat-header">Категории</h1>
+    <ul>
+    {% if cat_selected == 0 %}
+        <li class="selected"><a href="{% url 'main'%}" ><img  class="cat-img" src="/static/web/image/cat-icon.png">Все</a></li>
+    {% else %}
+        <li class="category"><a href="{% url 'main'%}" ><img  class="cat-img" src="https://cdn-icons-png.flaticon.com/512/5110/5110770.png">Все</a></li>
+    {%endif%}
+         {% for c in category %}
+                {% if c.category != 'Не опубликовано'%}
+                        {% if c.pk == cat_selected %}
+                            {% if c.selected_image %}
+                                <li class="selected"> <a href="{{ c.get_absolute_url }}"><img class="cat-img" src="{{c.selected_image.url}}">{{c.category}}</a></li>
+                            {%else%}
+                                <li class="selected"><a href="{{ c.get_absolute_url }}">{{c.category}}</a></li>
+                            {%endif%}
+                        {% else %}
+                            {% if c.image %}
+                                <li class="category"> <a href="{{ c.get_absolute_url }}"><img class="cat-img" src="{{c.image.url}}">{{c.category}}</a></li>
+                            {%else%}
+                                <li class="category"><a href="{{ c.get_absolute_url }}">{{c.category}}</a></li>
+                            {%endif%}
+                        {% endif %}
+                {% else %}
+                    {% if request.user.is_superuser and c.category == 'Не опубликовано' %}
+                        {% if c.pk == cat_selected %}
+                            {% if c.selected_image %}
+                                <li class="selected"> <a href="{{ c.get_absolute_url }}"><img class="cat-img" src="{{c.selected_image.url}}">{{c.category}}</a></li>
+                            {%else%}
+                                <li class="selected"><a href="{{ c.get_absolute_url }}">{{c.category}}</a></li>
+                            {%endif%}
+                        {%else%}
+                            {% if c.image %}
+                                <li class="category"> <a href="{{ c.get_absolute_url }}"><img class="cat-img" src="{{c.image.url}}">{{c.category}}</a></li>
+                            {%else%}
+                                <li class="category"><a href="{{ c.get_absolute_url }}">{{c.category}}</a></li>
+                            {%endif%}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+
+    {% endfor %}
+
+
+    </ul>
+</div>
+{% endblock %}
+{% block title %}
+<h1 class="maintitle">Главная страница</h1>
+{% endblock %}
+{% block content %}
+    {% if posts %}
+           {% for post in posts %}
+            {% if post.is_published %}
+            <a href="{{ post.get_absolute_url }}"><div class="post">
+                <div class="table">
+                <div class="post_image"><img src="{{ post.image.url }}" >
+                </div>
+                <div class="post_info">
+                <h1 class="post_title">{{ post.title }}</h1>
+                <div class="post_text">{{post.text|linebreaks|truncatewords:50 }}</div>
+                    <div class="post_bot">
+                <p class="post_author"><img class="author-img" src="https://api.icons8.com/download/54ca22984aa83d79b5b77b8b117591e3c9bd96ba/iOS7/PNG/512/Very_Basic/contacts_filled-512.png"><b>Автор: {{post.author}}</b></p>
+                <p class="post_date">Дата публикации:{{post.date}}</p>
+                    </div>
+                </div>
+                </div>
+            </div></a>
+            {% else %}
+                        <a href="{{ post.get_absolute_url }}"><div class="post">
+                <div class="table">
+                <div class="post_image"><img src="{{ post.image.url }}" >
+                </div>
+                <div class="post_info">
+                <h1 class="post_title">{{ post.title }} <h1 class="not_pub">(Не опубликовано)</h1></h1>
+                <div class="post_text">{{post.text|linebreaks|truncatewords:50 }}</div>
+                    <div class="post_bot">
+                <p class="post_author"><img class="author-img" src="https://api.icons8.com/download/54ca22984aa83d79b5b77b8b117591e3c9bd96ba/iOS7/PNG/512/Very_Basic/contacts_filled-512.png"><b>Автор: {{post.author}}</b></p>
+                <p class="post_date">Дата публикации:{{post.date}}</p>
+                    </div>
+                </div>
+                </div>
+            </div></a>
+            {% endif %}
+            {% endfor %}
+    {% else %}
+        <p class="not_posts">В этой категории нет ни одной новости.</p>
+    {% endif %}
+{% endblock %}
+

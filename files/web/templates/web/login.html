@@ -1,0 +1,25 @@
+{% extends 'web/base_form.html' %}
+
+{% block content %}
+{% if not request.user.is_authenticated %}
+    <h1 class="form_title">Авторизация</h1>
+    {% csrf_token %}
+    {% for f in form %}
+        <div class="form_group">
+
+            {{ f }}
+            <label class="form_label" for="{{ f.id_for_label }}">{{f.label}}</label>
+            <div class="form_error">{{f.errors}}</div>
+        </div>
+
+    {% endfor %}
+
+        <div class="form_error">{{ form.non_field_errors }}</div>
+    <div class="tip"><a href="{% url 'recovery' %}" >Забыли пароль?</a></div>
+    <div class="button_div">
+        <button type="submit" class="form_button">Войти</button>
+    </div>
+{% else %}
+<p>Вы уже авторизованы.</p>
+{% endif %}
+{% endblock %}

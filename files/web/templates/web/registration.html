@@ -1,0 +1,22 @@
+{% extends 'web/base_form.html' %}
+
+{% block content %}
+    <p class="form_title">Регистрация</p>
+    {% csrf_token %}
+    {% for f in form %}
+        <div class="form_group">
+
+            {{ f }}
+            <label class="form_label" for="{{ f.id_for_label }}">{{f.label}}</label>
+            <div class="form_error">{{f.errors}}</div>
+        </div>
+    {% endfor %}
+
+
+    <div class="tip"><a href="{% url 'login' %}">Уже есть акканут?</a> </div>
+    <div class="form_error">{{ form.non_field_errors }}</div>
+    <div class="button_div">
+        <button type="submit" class="form_button">Регистрация</button>
+    </div>
+
+{% endblock %}
